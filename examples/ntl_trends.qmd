@@ -1,0 +1,97 @@
+---
+title: "Trends in Nighttime Lights Across Admin Zones"
+author: ''
+date: ''
+format:
+  html:
+    toc: true
+    code-fold: false
+knitr:
+  opts_chunk:
+    warning: false
+    message: false
+---
+
+This page shows how to examine trends in nighttime lights across administrative zones for a country. The page illustrates using nighttime lights data from [NASA Black Marble](https://blackmarble.gsfc.nasa.gov/) using the [BlackMarbleR](https://github.com/worldbank/blackmarbler) R package, where the package facilitates querying data from the [NASA LAADS Archive](https://ladsweb.modaps.eosdis.nasa.gov/).
+
+# Setup
+
+Querying data from the NASA LAADS archive---and using the BlackMarbleR package---requires a NASA bearer token. To obtain a token, follow [these steps](https://github.com/worldbank/blackmarbler?tab=readme-ov-file#bearer-token-).
+
+# Code
+
+* ADD LINK TO COLAB
+
+```{r}
+#| include: false
+library(tidyverse)
+bearer <- read_csv("~/Dropbox/bearer_bm.csv") %>%
+  pull(token)
+```
+
+
+```{r}
+## Load packages
+library(tidyverse)    # R workhorse
+library(sf)           # Working with spatial data
+library(geodata)      # To query country boundary data from GADM
+library(blackmarbler) # To query Black Marble NTL data
+library(kableExtra)   # Making tables
+
+## Bearer Token
+bearer <- "BEARER TOKEN HERE"
+```
+
+```{r}
+#| include: false
+bearer <- read_csv("~/Dropbox/bearer_bm.csv") %>%
+  pull(token)
+```
+
+```{r}
+## Get polygons of ADM1 for example country (Rwanda)
+roi_sf <- gadm('RWA', level=1, path = tempdir()) %>%
+  st_as_sf()
+
+## Extract total annual nighttime lights within Rwanda's ADM1 units
+ntl_df <- bm_extract(roi_sf = roi_sf,
+                     product_id = "VNP46A4",
+                     date = 2012:2023,
+                     bearer = bearer,
+                     aggregation_fun = "sum",
+                     quiet = T)
+
+## Examine data
+ntl_df %>%
+  select(COUNTRY, NAME_1, date, contains("n_")) %>%
+  head() %>%
+  kable()
+
+## Plot trends
+ntl_df %>%
+  ggplot() +
+  geom_col(aes(x = date, 
+               y = ntl_sum),
+           fill = "darkorange") +
+  facet_wrap(~NAME_1) +
+  labs(x = NULL,
+       y = "NTL",
+       title = "Annual Nighttime Lights Across Rwanda's ADM1s") +
+  theme_minimal() +
+  theme(strip.text = element_text(face = "bold"))
+```
+
+# Related Examples
+
+* NTL trends using BlackMarblePy
+* NTL trends using GEE and Python
+* NTL trends using GEE and R
+* NTL trends using GEE code editor
+
+# References
+
+* World Bank economic monitors, including monitors for [Lebanon](https://datapartnership.org/lebanon-economic-monitor/notebooks/ntl-analysis/README.html), [Myanmar](https://datapartnership.org/myanmar-economic-monitor/notebooks/nighttime-lights/analysis-2023/README.html)
+
+
+
+

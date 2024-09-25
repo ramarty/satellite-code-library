@@ -1,0 +1,17 @@
+---
+title: "Determining City Size and Growth using Nighttime Lights"
+author: ''
+date: ''
+format:
+  html:
+    toc: true
+    code-fold: false
+knitr:
+  opts_chunk:
+    warning: false
+    message: false
+---
+
+# References
+
+* [Ch, Rafael, Diego A. Martin, and Juan F. Vargas. "Measuring the size and growth of cities using nighttime light." Journal of Urban Economics 125 (2021): 103254.](https://www.sciencedirect.com/science/article/pii/S0094119020300255?casa_token=giskWQHsXmQAAAAA:cXgXE31_72Brhltn-iKD5u8HnEFP8m7liQ7bZstzV29SpzSYb7vf9X_NHrNMkJ5hTtbDOYYWQw)
